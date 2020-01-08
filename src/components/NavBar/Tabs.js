@@ -30,8 +30,8 @@ function TabsContainer({ tabIndex, setTabIndex }) {
       aria-label="Navigation tabs"
       classes={classes}
     >
-      <Tab label="View Movies" id="nav-tab-0" ariaControls="nav-tabpanel-0" />
-      <Tab label="Add Movie" id="nav-tab-1" ariaControls="nav-tabpanel-1" />
+      <Tab label="View Movies" id="nav-tab-0" aria-controls="nav-tabpanel-0" />
+      <Tab label="Add Movie" id="nav-tab-1" aria-controls="nav-tabpanel-1" />
     </Tabs>
   );
 }
