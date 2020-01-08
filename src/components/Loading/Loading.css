@@ -1,0 +1,15 @@
+.loading {
+  font-size: 50px;
+  animation: load 4s ease-in-out infinite;
+}
+@keyframes load {
+  0% {
+    transform: rotate(0deg);
+  }
+  50% {
+    transform: rotate(1080deg);
+  }
+  100% {
+    transform: rotate(0deg);
+  }
+}

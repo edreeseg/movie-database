@@ -1,0 +1,17 @@
+.flex {
+  display: 'flex';
+}
+.flex-centered {
+  display: 'flex';
+  align-items: 'center';
+}
+.headings {
+  margin-bottom: '5px';
+  margin-top: '15px';
+}
+.form-div {
+  margin-top: '15px';
+}
+.actor-text:hover {
+  cursor: 'pointer';
+}
