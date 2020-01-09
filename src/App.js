@@ -15,19 +15,6 @@ import {
   initialGenresChecked,
 } from './components/ControlPanel/panelSetup';
 
-const dummyData = [];
-for (let i = 0; i < 100; i++) {
-  dummyData.push({
-    movie_id: `${i}`,
-    title: 'The Lord of the Rings, The Return of the King',
-    genre: 'Fantasy',
-    year: 2003,
-    run_time: 12000,
-    rating: 'PG-13',
-    main_actors: ['Elijah Wood', 'Ian McKellen', 'Viggo Mortensen'],
-  });
-}
-
 const listContainerStyles = makeStyles(theme => ({
   root: props => ({
     transition: 'transform .3s',
@@ -40,10 +27,10 @@ const listContainerStyles = makeStyles(theme => ({
 }));
 
 function App() {
-  const [movies, setMovies] = useState(dummyData);
-  // `sortedMovies` being truthy will indicate that the user has elected to sort movies.
-  // Original order of movies will be preserved in `movies`.
-  const [sortedMovies, setSortedMovies] = useState(null);
+  const [movies, setMovies] = useState([]);
+  // Original order of movies will be preserved in `originalList`.
+  const [originalList, setOriginalList] = useState([]);
+  const [sortInEffect, setSortInEffect] = useState(false);
   const [sortValue, setSortValue] = useState(null);
   const [orderIsDescending, setOrderIsDescending] = useState(true);
   const [pageNumber, setPageNumber] = useState(1);
@@ -59,18 +46,26 @@ function App() {
   const [controlPanelHeight, setControlPanelHeight] = useState(0);
   const [tabIndex, setTabIndex] = useState(0);
   // Loading boolean, for awaiting HTTP responses.
-  const [loading, setLoading] = useState(false);
-  // useEffect(() => {
-  //   axios
-  //     .get(
-  //       `https://homework.eegapis.com/movies?api_key=${process.env.REACT_APP_API_KEY}`
-  //     )
-  //     .then(res => setMovies(res.data.movies))
-  //     .catch(err => console.log(err));
-  // }, []);
+  const [loading, setLoading] = useState(true);
   useEffect(() => {
-    console.log(pageNumber);
-  }, [pageNumber]);
+    axios
+      .get(
+        `https://homework.eegapis.com/movies?api_key=${process.env.REACT_APP_API_KEY}`
+      )
+      .then(res => {
+        setOriginalList(res.data.movies);
+        setLoading(false);
+      })
+      .catch(err => {
+        console.log(err);
+        setLoading(false);
+      });
+  }, []);
+  useEffect(() => {
+    // Effect will run whenever originalList is changed, running search form function
+    // which will check if further criteria must be considered before displaying list
+    handleSearchFormSubmit();
+  }, [originalList]);
   const listContainerClasses = listContainerStyles({
     controlPanelOpen,
     controlPanelHeight,
@@ -95,9 +90,12 @@ function App() {
     const copy = [...arr];
     switch (sortValue) {
       case 'A-Z':
-        return copy.sort((a, b) =>
-          orderIsDescending ? a.title - b.title : b.title - a.title
-        );
+        return copy.sort((a, b) => {
+          if (orderIsDescending) {
+            return a.title > b.title ? 1 : -1;
+          }
+          return b.title > a.title ? 1 : -1;
+        });
       case 'Year':
         return copy.sort((a, b) =>
           orderIsDescending ? a.year - b.year : b.year - a.year
@@ -124,24 +122,33 @@ function App() {
         throw new Error('Sort function called with invalid type.');
     }
   };
-  const handleSearchFormSubmit = ev => {
-    if (ev.preventDefault) {
+  function handleSearchFormSubmit(ev) {
+    if (ev) {
       ev.preventDefault();
     }
+    // Check for no search/sort/filter criteria, to avoid needing to filter through
+    // entire movie list unnecessarily.  Could also use a for...of loop to iterate over
+    // the Map iterator and avoid having to convert to an array.
+    const ratingsUnchecked = [...checkedRatings.values()].includes(false);
+    const genresUnchecked = [...checkedGenres.values()].includes(false);
+    if (!ratingsUnchecked && !genresUnchecked && !sortValue && !searchQuery) {
+      return setMovies([...originalList]);
+    }
     // Filter array first based on selected checkboxes
-    const filteredArr = filterMovies(movies);
+    const filteredArr = filterMovies(originalList);
     // Check if searchQuery is long enough to justify factoring it in
     if (searchQuery.length > 1) {
       const fuse = new Fuse(filteredArr, searchOptions);
       const searchResult = fuse.search(searchQuery);
       // If so, double check if the user has indicated they want results sorted
       // and set the result in state.
-      return setSortedMovies(sortValue ? sortMovies(movies) : searchResult);
+      return setMovies(sortValue ? sortMovies(searchResult) : searchResult);
     }
     // If not, simply do the same with the array returned by filterMovies.
-    setSortedMovies(sortValue ? sortMovies(filteredArr) : filteredArr);
-  };
+    setMovies(sortValue ? sortMovies(filteredArr) : filteredArr);
+  }
   const addMovie = info => {
+    setLoading(true);
     const {
       title,
       year: yearString,
@@ -166,14 +173,32 @@ function App() {
     }
     const requestObject = { title, year, genre, rating, run_time };
     if (main_actors.length) requestObject.main_actors = main_actors;
-    console.log(requestObject);
-    // axios
-    //   .post(
-    //     `https://homework.eegapis.com/movies?api_key=${process.env.REACT_APP_API_KEY}`,
-    //     requestObject
-    //   )
-    //   .then(movie => setMovies(prev => [...prev, movie]))
-    //   .catch(err => console.log(err));
+    axios
+      .post(
+        `https://homework.eegapis.com/movies?api_key=${process.env.REACT_APP_API_KEY}`,
+        requestObject
+      )
+      .then(res => {
+        setOriginalList(prev => [...prev, res.data]);
+        setTabIndex(0);
+        setLoading(false);
+      })
+      .catch(err => {
+        console.log(err);
+        setLoading(false);
+      });
+  };
+  const deleteMovie = id => {
+    setLoading(true);
+    axios
+      .delete(
+        `https://homework.eegapis.com/movies/${id}?api_key=${process.env.REACT_APP_API_KEY}`
+      )
+      .then(res => {
+        const filterMovie = movie => movie.movie_id !== id;
+        setOriginalList(prev => prev.filter(filterMovie));
+        setLoading(false);
+      });
   };
   // Define props for control panel in advance and spread, to make JSX more readable.
   const controlPanelProps = {
@@ -200,14 +225,13 @@ function App() {
         <PageSelect
           pageNumber={pageNumber}
           setPageNumber={setPageNumber}
-          pageTotal={Math.floor((sortedMovies || movies).length / 10)}
+          pageTotal={Math.floor(movies.length / 10) || 1}
         />
         {tabIndex ? (
-          <AddMovie addMovie={addMovie} />
+          <AddMovie addMovie={addMovie} loading={loading} />
         ) : (
           <MovieList
-            movies={sortedMovies || movies}
-            sortedMovies={sortedMovies}
+            movies={movies}
             pageNumber={pageNumber}
             loading={loading}
           />

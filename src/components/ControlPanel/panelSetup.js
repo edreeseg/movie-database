@@ -2,13 +2,13 @@
 
 export const ratings = ['G', 'PG', 'PG-13', 'R', 'NC-17'];
 export const genres = [
-  'Action',
-  'Comedy',
-  'Drama',
-  'Fantasy',
-  'Horror',
-  'Musical',
-  'Romance',
+  'action',
+  'comedy',
+  'drama',
+  'fantasy',
+  'horror',
+  'musical',
+  'romance',
 ];
 export const initialRatingsChecked = new Map(
   ratings.map(rating => [rating, true])

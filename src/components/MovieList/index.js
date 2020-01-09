@@ -19,7 +19,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function MovieList({ movies, sortedMovies, pageNumber, loading }) {
+function MovieList({ movies, pageNumber, loading }) {
   const classes = useStyles();
   const generatePage = (arr, n) => {
     // Generate an array to represent the current page
@@ -28,22 +28,17 @@ function MovieList({ movies, sortedMovies, pageNumber, loading }) {
     const end = start + pageSize;
     return arr.slice(start, end);
   };
+  if (loading) {
+    return <Loading />;
+  }
   return (
     <Paper classes={classes}>
-      {loading ? (
-        <Loading />
-      ) : movies.length ? (
-        <>
-          {generatePage(movies, pageNumber).map(movie => (
-            <Movie key={movie.movie_id} data={movie} />
-          ))}
-        </>
+      {movies.length ? (
+        generatePage(movies, pageNumber).map(movie => (
+          <Movie key={movie.movie_id} data={movie} />
+        ))
       ) : (
-        <Typography variant="h4">
-          {/* If the movies have been sorted, a lack of movies indicates that criteria
-          has not been met, rather than there not being any movies */}
-          {sortedMovies ? 'No movies meet criteria' : 'No movies added!'}
-        </Typography>
+        <Typography variant="h4">No Matching Movies Found</Typography>
       )}
     </Paper>
   );
@@ -51,7 +46,6 @@ function MovieList({ movies, sortedMovies, pageNumber, loading }) {
 
 MovieList.propTypes = {
   movies: PropTypes.array,
-  sortedMovies: PropTypes.array,
   pageNumber: PropTypes.number,
   loading: PropTypes.bool,
 };

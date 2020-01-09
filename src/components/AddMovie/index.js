@@ -6,6 +6,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import { makeStyles } from '@material-ui/core/styles';
+import Loading from '../Loading';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -24,7 +25,6 @@ const submitButtonStyles = makeStyles(theme => ({
 }));
 
 function AddMovie(props) {
-  console.log(props);
   // Keep track of the form keys to maintain controlled components
   const [formInput, setFormInput] = useState({
     title: '',
@@ -73,7 +73,9 @@ function AddMovie(props) {
     ev.preventDefault();
     props.addMovie({ ...formInput, main_actors: mainActorList });
   };
-  return (
+  return props.loading ? (
+    <Loading />
+  ) : (
     <FormControl component="form" classes={classes} onSubmit={handleAddMovie}>
       <TextField
         variant="outlined"
@@ -94,13 +96,13 @@ function AddMovie(props) {
         value={formInput.genre}
         onChange={handleChange('genre')}
       >
-        <MenuItem value="Action">Action</MenuItem>
-        <MenuItem value="Comedy">Comedy</MenuItem>
-        <MenuItem value="Drama">Drama</MenuItem>
-        <MenuItem value="Fantasy">Fantasy</MenuItem>
-        <MenuItem value="Horror">Horror</MenuItem>
-        <MenuItem value="Musical">Musical</MenuItem>
-        <MenuItem value="Romance">Romance</MenuItem>
+        <MenuItem value="action">Action</MenuItem>
+        <MenuItem value="comedy">Comedy</MenuItem>
+        <MenuItem value="drama">Drama</MenuItem>
+        <MenuItem value="fantasy">Fantasy</MenuItem>
+        <MenuItem value="horror">Horror</MenuItem>
+        <MenuItem value="musical">Musical</MenuItem>
+        <MenuItem value="romance">Romance</MenuItem>
       </TextField>
       <TextField
         select={true}
@@ -192,6 +194,7 @@ function AddMovie(props) {
 
 AddMovie.propTypes = {
   addMovie: PropTypes.func,
+  loading: PropTypes.bool,
 };
 
 export default AddMovie;

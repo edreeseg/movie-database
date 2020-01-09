@@ -23,7 +23,9 @@ function GenreSelect({ genres, setCheckedGenres, checkedGenres }) {
             className={classes.item}
             elevation={2}
           >
-            <label htmlFor={`genre-checkbox-${genre}`}>{genre}</label>
+            <label htmlFor={`genre-checkbox-${genre}`}>
+              {genre[0].toUpperCase() + genre.slice(1)}
+            </label>
             <Checkbox
               name={genre}
               onChange={handleGenreChange}
