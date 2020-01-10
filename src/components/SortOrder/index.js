@@ -41,16 +41,34 @@ const useStyles = makeStyles(theme => ({
   checked: {},
 }));
 
+const useContainerStyles = makeStyles(theme => ({
+  root: {
+    order: '-1',
+    alignSelf: 'center',
+    [theme.breakpoints.up(424)]: {
+      position: 'absolute',
+      top: 0,
+      right: '80px',
+    },
+    [theme.breakpoints.up(710)]: {
+      position: 'static',
+    },
+  },
+}));
+
 function SortOrder({ orderIsDescending, setOrderIsDescending, hide }) {
   // Component to handle switching order of sorting between ascending and descending
   const classes = useStyles();
+  const containerClasses = useContainerStyles();
   const handleChange = ev => {
     setOrderIsDescending(prev => !prev);
   };
   return (
-    <Typography component="div" style={{ order: '-1', alignSelf: 'center' }}>
+    <Typography component="div" classes={containerClasses}>
       <Grid component="label" container alignItems="center" spacing={1}>
-        <Grid item>Asc</Grid>
+        <Grid item style={orderIsDescending ? null : { fontWeight: 'bold' }}>
+          Asc
+        </Grid>
         <Grid item>
           <Switch
             classes={classes}
@@ -59,7 +77,9 @@ function SortOrder({ orderIsDescending, setOrderIsDescending, hide }) {
             onChange={handleChange}
           />
         </Grid>
-        <Grid item>Desc</Grid>
+        <Grid item style={orderIsDescending ? { fontWeight: 'bold' } : null}>
+          Desc
+        </Grid>
       </Grid>
     </Typography>
   );

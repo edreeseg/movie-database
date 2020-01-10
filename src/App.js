@@ -9,11 +9,13 @@ import {
   MovieList,
   PageSelect,
   AddMovie,
+  Error,
 } from './components';
 import {
   initialRatingsChecked,
   initialGenresChecked,
 } from './components/ControlPanel/panelSetup';
+import './App.css';
 
 const listContainerStyles = makeStyles(theme => ({
   root: props => ({
@@ -30,7 +32,6 @@ function App() {
   const [movies, setMovies] = useState([]);
   // Original order of movies will be preserved in `originalList`.
   const [originalList, setOriginalList] = useState([]);
-  const [sortInEffect, setSortInEffect] = useState(false);
   const [sortValue, setSortValue] = useState(null);
   const [orderIsDescending, setOrderIsDescending] = useState(true);
   const [pageNumber, setPageNumber] = useState(1);
@@ -46,6 +47,7 @@ function App() {
   const [controlPanelHeight, setControlPanelHeight] = useState(0);
   const [tabIndex, setTabIndex] = useState(0);
   // Loading boolean, for awaiting HTTP responses.
+  const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
   useEffect(() => {
     axios
@@ -58,6 +60,11 @@ function App() {
       })
       .catch(err => {
         console.log(err);
+        if (err.response && err.response.data) {
+          setError(err.response.data.message);
+        } else {
+          setError('There was a problem while retrieving movies.');
+        }
         setLoading(false);
       });
   }, []);
@@ -150,29 +157,24 @@ function App() {
   const addMovie = info => {
     setLoading(true);
     const {
-      title,
+      title: enteredTitle,
       year: yearString,
       genre,
       rating,
       run_time: run_obj,
       main_actors,
     } = info;
+    const title = enteredTitle.trim();
     const run_time =
       run_obj.hours * 3600 + run_obj.minutes * 60 + Number(run_obj.seconds);
     const year = Number(yearString);
-    if (
-      !title ||
-      !year ||
-      Number.isNaN(year) ||
-      !genre ||
-      !rating ||
-      !run_time
-    ) {
-      // Handle error.
-      return;
-    }
     const requestObject = { title, year, genre, rating, run_time };
     if (main_actors.length) requestObject.main_actors = main_actors;
+    for (let [key, value] of Object.entries(requestObject)) {
+      if (!value) {
+        return setError(`Missing field: ${key}`);
+      }
+    }
     axios
       .post(
         `https://homework.eegapis.com/movies?api_key=${process.env.REACT_APP_API_KEY}`,
@@ -185,6 +187,11 @@ function App() {
       })
       .catch(err => {
         console.log(err);
+        if (err.response && err.response.data) {
+          setError(err.response.data.message);
+        } else {
+          setError('There was a problem while adding movie.');
+        }
         setLoading(false);
       });
   };
@@ -197,6 +204,15 @@ function App() {
       .then(res => {
         const filterMovie = movie => movie.movie_id !== id;
         setOriginalList(prev => prev.filter(filterMovie));
+        setLoading(false);
+      })
+      .catch(err => {
+        console.log(err);
+        if (err.response && err.response.data) {
+          setError(err.response.data.message);
+        } else {
+          setError('There was a problem while deleting movie.');
+        }
         setLoading(false);
       });
   };
@@ -219,9 +235,13 @@ function App() {
   };
   return (
     <>
+      <Error error={error} setError={setError} />
       <NavBar tabIndex={tabIndex} setTabIndex={setTabIndex} />
       <ControlPanel {...controlPanelProps} />
       <Container classes={listContainerClasses}>
+        <div className="movie-icon-container">
+          <div className="movie-night-icon" />
+        </div>
         <PageSelect
           pageNumber={pageNumber}
           setPageNumber={setPageNumber}
@@ -234,6 +254,10 @@ function App() {
             movies={movies}
             pageNumber={pageNumber}
             loading={loading}
+            setLoading={setLoading}
+            setError={setError}
+            setOriginalList={setOriginalList}
+            deleteMovie={deleteMovie}
           />
         )}
       </Container>

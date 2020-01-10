@@ -22,19 +22,25 @@ export const useStyles = makeStyles(theme => ({
   controlPanelToggle: {
     position: 'absolute',
     width: '75px',
-    height: '20%',
+    height: '100px',
     top: '100%',
     right: '0',
     background: '#373737',
     display: 'flex',
     alignItems: 'center',
+    [theme.breakpoints.up(310)]: {
+      width: '25vw',
+      height: '100%',
+      maxWidth: '75px',
+      maxHeight: '20%',
+    },
     [theme.breakpoints.up(424)]: {
       position: 'static',
     },
     [theme.breakpoints.up(710)]: {
       position: 'absolute',
       top: '500%',
-      left: 'calc(100% + ((100vw - 100%) / 2))',
+      left: 'calc(100% + ((100vw - 100%) / 2) - 3%)',
       transform: 'translateX(-100%)',
       height: '100px',
     },
@@ -64,7 +70,7 @@ export const useStyles = makeStyles(theme => ({
     },
   },
   toggleInner: {
-    height: '94%',
+    height: '90%',
     width: '75%',
     background: 'white',
     display: 'flex',

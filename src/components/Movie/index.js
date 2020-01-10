@@ -8,6 +8,7 @@ import Container from '@material-ui/core/Container';
 import { makeStyles } from '@material-ui/core/styles';
 import { MdExpandMore, MdDeleteForever } from 'react-icons/md';
 import { FaRegEdit } from 'react-icons/fa';
+import EditMovie from '../EditMovie';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -15,9 +16,12 @@ const useStyles = makeStyles(theme => ({
     fontWeight: theme.typography.fontWeightRegular,
   },
   content: {
-    textOverflow: 'ellipsis',
-    whiteSpace: 'nowrap',
-    overflow: 'hidden',
+    width: '90%',
+    '& p': {
+      textOverflow: 'ellipsis',
+      whiteSpace: 'normal', // Set to `nowrap` to truncate string and keep title on one line
+      overflow: 'hidden',
+    },
   },
 }));
 
@@ -35,8 +39,8 @@ const useButtonContainerStyles = makeStyles(theme => ({
     justifyContent: 'space-between',
     width: '100px',
     position: 'absolute',
-    bottom: '5px',
-    right: 0,
+    bottom: '20px',
+    right: '10px',
     transition: 'opacity .3s',
     '& svg': {
       fontSize: '30px',
@@ -50,7 +54,14 @@ const useButtonContainerStyles = makeStyles(theme => ({
   },
 }));
 
-function Movie({ data }) {
+function Movie({
+  data,
+  deleteMovie,
+  loading,
+  setLoading,
+  setError,
+  setOriginalList,
+}) {
   const [editing, setEditing] = useState(false);
   const [panelOpen, setPanelOpen] = useState(false);
   // Basic list to display individual movie information
@@ -62,6 +73,17 @@ function Movie({ data }) {
   };
   return (
     <ExpansionPanel onChange={handleChange}>
+      {editing ? (
+        <EditMovie
+          data={data}
+          editing={editing}
+          setEditing={setEditing}
+          loading={loading}
+          setLoading={setLoading}
+          setError={setError}
+          setOriginalList={setOriginalList}
+        />
+      ) : null}
       <ExpansionPanelSummary
         expandIcon={<MdExpandMore />}
         id={`${data.title}-heading`}
@@ -99,7 +121,7 @@ function Movie({ data }) {
             style={{ opacity: panelOpen ? 1 : 0 }}
           >
             <FaRegEdit onClick={() => setEditing(true)} />
-            <MdDeleteForever />
+            <MdDeleteForever onClick={() => deleteMovie(data.movie_id)} />
           </Container>
         </Typography>
       </ExpansionPanelDetails>
@@ -117,6 +139,7 @@ Movie.propTypes = {
     rating: PropTypes.string,
     main_actors: PropTypes.array,
   }),
+  deleteMovie: PropTypes.func,
 };
 
 export default Movie;

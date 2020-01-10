@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import FormControl from '@material-ui/core/FormControl';
 import TextField from '@material-ui/core/TextField';
-import MenuItem from '@material-ui/core/MenuItem';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import { makeStyles } from '@material-ui/core/styles';
@@ -11,6 +10,15 @@ import Loading from '../Loading';
 const useStyles = makeStyles(theme => ({
   root: {
     marginTop: '70px',
+  },
+}));
+
+const useLoadingStyles = makeStyles(theme => ({
+  root: {
+    marginTop: '70px',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 }));
 
@@ -38,6 +46,7 @@ function AddMovie(props) {
   const [mainActorInput, setMainActorInput] = useState('');
   const [mainActorList, setMainActorList] = useState([]);
   const classes = useStyles();
+  const loadingClasses = useLoadingStyles();
   const submitButtonClasses = submitButtonStyles();
   const handleChange = key => ev => {
     // Handle standard form changes
@@ -74,7 +83,9 @@ function AddMovie(props) {
     props.addMovie({ ...formInput, main_actors: mainActorList });
   };
   return props.loading ? (
-    <Loading />
+    <FormControl component="form" classes={loadingClasses}>
+      <Loading />
+    </FormControl>
   ) : (
     <FormControl component="form" classes={classes} onSubmit={handleAddMovie}>
       <TextField
@@ -91,30 +102,32 @@ function AddMovie(props) {
         onChange={handleChange('year')}
       />
       <TextField
-        select={true}
+        select
         label="Genre"
         value={formInput.genre}
         onChange={handleChange('genre')}
+        SelectProps={{ native: true }}
       >
-        <MenuItem value="action">Action</MenuItem>
-        <MenuItem value="comedy">Comedy</MenuItem>
-        <MenuItem value="drama">Drama</MenuItem>
-        <MenuItem value="fantasy">Fantasy</MenuItem>
-        <MenuItem value="horror">Horror</MenuItem>
-        <MenuItem value="musical">Musical</MenuItem>
-        <MenuItem value="romance">Romance</MenuItem>
+        <option value="action">Action</option>
+        <option value="comedy">Comedy</option>
+        <option value="drama">Drama</option>
+        <option value="fantasy">Fantasy</option>
+        <option value="horror">Horror</option>
+        <option value="musical">Musical</option>
+        <option value="romance">Romance</option>
       </TextField>
       <TextField
-        select={true}
+        select
         label="Rating"
         value={formInput.rating}
+        SelectProps={{ native: true }}
         onChange={handleChange('rating')}
       >
-        <MenuItem value="G">G</MenuItem>
-        <MenuItem value="PG">PG</MenuItem>
-        <MenuItem value="PG-13">PG-13</MenuItem>
-        <MenuItem value="R">R</MenuItem>
-        <MenuItem value="NC-17">NC-17</MenuItem>
+        <option value="G">G</option>
+        <option value="PG">PG</option>
+        <option value="PG-13">PG-13</option>
+        <option value="R">R</option>
+        <option value="NC-17">NC-17</option>
       </TextField>
       <Typography variant="overline" className="headings">
         Runtime

@@ -12,14 +12,4 @@ export const useStyles = makeStyles(theme => ({
     height: '100%',
     minHeight: '56px',
   },
-  helpButton: {
-    fontSize: '32px',
-    color: '#09afdf',
-    '&:hover': {
-      color: '#3dcdf7',
-    },
-    '&:active': {
-      color: '#216396',
-    },
-  },
 }));

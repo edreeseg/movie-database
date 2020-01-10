@@ -1,5 +1,5 @@
 .loading {
-  font-size: 50px;
+  font-size: 100px;
   animation: load 4s ease-in-out infinite;
 }
 @keyframes load {

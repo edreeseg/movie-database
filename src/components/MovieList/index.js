@@ -8,18 +8,24 @@ import { makeStyles } from '@material-ui/core/styles';
 
 const useStyles = makeStyles(theme => ({
   root: {
-    width: '70%',
-    margin: '0 auto',
-    marginTop: '30px',
+    width: '98%',
+    margin: '30px auto',
     overflow: 'auto',
-    textAlign: 'center',
     '& h4': {
       marginTop: '30px',
     },
   },
 }));
 
-function MovieList({ movies, pageNumber, loading }) {
+function MovieList({
+  movies,
+  pageNumber,
+  loading,
+  setLoading,
+  setError,
+  setOriginalList,
+  deleteMovie,
+}) {
   const classes = useStyles();
   const generatePage = (arr, n) => {
     // Generate an array to represent the current page
@@ -29,13 +35,33 @@ function MovieList({ movies, pageNumber, loading }) {
     return arr.slice(start, end);
   };
   if (loading) {
-    return <Loading />;
+    return (
+      <Paper
+        classes={classes}
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: '200px',
+        }}
+      >
+        <Loading />
+      </Paper>
+    );
   }
   return (
     <Paper classes={classes}>
       {movies.length ? (
         generatePage(movies, pageNumber).map(movie => (
-          <Movie key={movie.movie_id} data={movie} />
+          <Movie
+            key={movie.movie_id}
+            data={movie}
+            deleteMovie={deleteMovie}
+            loading={loading}
+            setLoading={setLoading}
+            setError={setError}
+            setOriginalList={setOriginalList}
+          />
         ))
       ) : (
         <Typography variant="h4">No Matching Movies Found</Typography>
@@ -48,6 +74,10 @@ MovieList.propTypes = {
   movies: PropTypes.array,
   pageNumber: PropTypes.number,
   loading: PropTypes.bool,
+  setLoading: PropTypes.func,
+  setError: PropTypes.func,
+  setOriginalList: PropTypes.func,
+  deleteMovie: PropTypes.func,
 };
 
 export default MovieList;
