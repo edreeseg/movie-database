@@ -1,17 +1,20 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import Checkbox from './Checkbox';
 import { useStyles } from './styles/RatingSelectStyles';
+import * as actions from '../../redux/actions';
 
-function RatingSelect({ ratings, setCheckedRatings, checkedRatings }) {
+const ratings = ['G', 'PG', 'PG-13', 'R', 'NC-17'];
+
+function RatingSelect({ checkedRatings, changeCheckedRatings }) {
   const classes = useStyles();
   const handleRatingChange = ev => {
     // Make use of ES6 Map to keep track of which checkboxes have been selected
     const rating = ev.target.name;
-    const isChecked = ev.target.checked;
-    setCheckedRatings(map => new Map(map.set(rating, isChecked)));
+    changeCheckedRatings(rating);
   };
   return (
     <Grid classes={classes}>
@@ -38,9 +41,14 @@ function RatingSelect({ ratings, setCheckedRatings, checkedRatings }) {
 }
 
 RatingSelect.propTypes = {
-  ratings: PropTypes.array,
-  setCheckedRatings: PropTypes.func,
+  changeCheckedRatings: PropTypes.func,
   checkedRatings: PropTypes.instanceOf(Map),
 };
 
-export default RatingSelect;
+const mapStateToProps = state => ({
+  checkedRatings: state.checkedRatings,
+});
+
+export default connect(mapStateToProps, {
+  changeCheckedRatings: actions.changeCheckedRatings,
+})(RatingSelect);

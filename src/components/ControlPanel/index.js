@@ -1,5 +1,6 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import Container from '@material-ui/core/Container';
 import FormControl from '@material-ui/core/FormControl';
 import Input from '@material-ui/core/Input';
@@ -15,31 +16,21 @@ import RatingSelect from './RatingSelect';
 import GenreSelect from './GenreSelect';
 import SortSelect from './SortSelect';
 import SortOrder from '../SortOrder';
-import { ratings, genres } from './panelSetup';
+import * as actions from '../../redux/actions';
 
 function ControlPanel({
   controlPanelOpen,
-  setControlPanelOpen,
-  setControlPanelHeight,
-  sortValue,
-  setSortValue,
-  orderIsDescending,
-  setOrderIsDescending,
-  checkedRatings,
-  setCheckedRatings,
-  checkedGenres,
-  setCheckedGenres,
-  searchQuery,
-  setSearchQuery,
-  handleSearchFormSubmit,
+  changeControlPanelHeight,
+  searchMovies,
 }) {
+  const [searchQuery, setSearchQuery] = useState('');
   // Make use `react-resize-aware` library for the sake of having an exact pixel value
   // of the height of the control panel, to ensure accurate transformation.
   const [resizeListener, sizes] = useResizeAware();
   useEffect(() => {
     // If the height ever changes, update state.
-    setControlPanelHeight(sizes.height);
-  }, [sizes.height, setControlPanelHeight]);
+    changeControlPanelHeight(sizes.height);
+  }, [sizes.height, changeControlPanelHeight]);
   const classes = controlPanelStyles();
   const labelClasses = labelStyles();
   const buttonClasses = buttonStyles();
@@ -53,7 +44,7 @@ function ControlPanel({
       <FormControl
         component="form"
         className={classes.form}
-        onSubmit={handleSearchFormSubmit}
+        onSubmit={() => searchMovies(searchQuery)}
       >
         <Container className={classes.queryContainer}>
           <InputLabel classes={labelClasses}>
@@ -68,51 +59,30 @@ function ControlPanel({
           </InputLabel>
         </Container>
         <Container className={classes.checkboxContainer}>
-          <RatingSelect
-            setCheckedRatings={setCheckedRatings}
-            checkedRatings={checkedRatings}
-            ratings={ratings}
-          />
-          <GenreSelect
-            setCheckedGenres={setCheckedGenres}
-            checkedGenres={checkedGenres}
-            genres={genres}
-          />
+          <RatingSelect />
+          <GenreSelect />
         </Container>
         <Button type="submit" classes={buttonClasses}>
           Search
         </Button>
       </FormControl>
-      <SortSelect
-        controlPanelOpen={controlPanelOpen}
-        setControlPanelOpen={setControlPanelOpen}
-        sortValue={sortValue}
-        setSortValue={setSortValue}
-        controlPanelHeight={sizes.height}
-      />
-      <SortOrder
-        orderIsDescending={orderIsDescending}
-        setOrderIsDescending={setOrderIsDescending}
-      />
+      <SortSelect />
+      <SortOrder />
     </Container>
   );
 }
 
 ControlPanel.propTypes = {
   controlPanelOpen: PropTypes.bool,
-  setControlPanelOpen: PropTypes.func,
-  setControlPanelHeight: PropTypes.func,
-  sortValue: PropTypes.string,
-  setSortValue: PropTypes.func,
-  orderIsDescending: PropTypes.bool,
-  setOrderIsDescending: PropTypes.func,
-  checkedRatings: PropTypes.instanceOf(Map),
-  setCheckedRatings: PropTypes.func,
-  checkedGenres: PropTypes.instanceOf(Map),
-  setCheckedGenres: PropTypes.func,
-  searchQuery: PropTypes.string,
-  setSearchQuery: PropTypes.func,
-  handleSearchFormSubmit: PropTypes.func,
+  changeControlPanelHeight: PropTypes.func,
+  searchMovies: PropTypes.func,
 };
 
-export default ControlPanel;
+const mapStateToProps = state => ({
+  controlPanelOpen: state.controlPanelOpen,
+});
+
+export default connect(mapStateToProps, {
+  changeControlPanelHeight: actions.changeControlPanelHeight,
+  searchMovies: actions.searchMovies,
+})(ControlPanel);

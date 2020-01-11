@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import FormControl from '@material-ui/core/FormControl';
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import { makeStyles } from '@material-ui/core/styles';
 import Loading from '../Loading';
+import * as actions from '../../redux/actions';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -32,7 +34,7 @@ const submitButtonStyles = makeStyles(theme => ({
   },
 }));
 
-function AddMovie(props) {
+function AddMovie({ addMovie, loading }) {
   // Keep track of the form keys to maintain controlled components
   const [formInput, setFormInput] = useState({
     title: '',
@@ -80,9 +82,9 @@ function AddMovie(props) {
   const handleAddMovie = ev => {
     // Call function passed from App.
     ev.preventDefault();
-    props.addMovie({ ...formInput, main_actors: mainActorList });
+    addMovie({ ...formInput, main_actors: mainActorList });
   };
-  return props.loading ? (
+  return loading ? (
     <FormControl component="form" classes={loadingClasses}>
       <Loading />
     </FormControl>
@@ -108,6 +110,7 @@ function AddMovie(props) {
         onChange={handleChange('genre')}
         SelectProps={{ native: true }}
       >
+        <option value="" disabled></option>
         <option value="action">Action</option>
         <option value="comedy">Comedy</option>
         <option value="drama">Drama</option>
@@ -123,6 +126,7 @@ function AddMovie(props) {
         SelectProps={{ native: true }}
         onChange={handleChange('rating')}
       >
+        <option value=""></option>
         <option value="G">G</option>
         <option value="PG">PG</option>
         <option value="PG-13">PG-13</option>
@@ -210,4 +214,10 @@ AddMovie.propTypes = {
   loading: PropTypes.bool,
 };
 
-export default AddMovie;
+const mapStateToProps = state => ({
+  loading: state.loading,
+});
+
+export default connect(mapStateToProps, { addMovie: actions.addMovie })(
+  AddMovie
+);

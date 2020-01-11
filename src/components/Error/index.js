@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import Modal from '@material-ui/core/Modal';
 import BackDrop from '@material-ui/core/Backdrop';
 import Fade from '@material-ui/core/Fade';
@@ -7,6 +8,7 @@ import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import { makeStyles } from '@material-ui/core/styles';
+import * as actions from '../../redux/actions';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -38,10 +40,10 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function DisplayError({ error, setError }) {
+function DisplayError({ error, clearError }) {
   const classes = useStyles();
   const handleClose = (ev, reason) => {
-    setError(null);
+    clearError();
   };
   return (
     <Modal
@@ -67,7 +69,13 @@ function DisplayError({ error, setError }) {
 
 DisplayError.propTypes = {
   error: PropTypes.string,
-  setError: PropTypes.func,
+  clearError: PropTypes.func,
 };
 
-export default DisplayError;
+const mapStateToProps = state => ({
+  error: state.error,
+});
+
+export default connect(mapStateToProps, { clearError: actions.clearError })(
+  DisplayError
+);

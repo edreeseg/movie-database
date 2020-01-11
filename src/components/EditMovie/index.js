@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import axios from 'axios';
+import { connect } from 'react-redux';
 import Modal from '@material-ui/core/Modal';
 import BackDrop from '@material-ui/core/BackDrop';
 import Fade from '@material-ui/core/Fade';
@@ -9,53 +9,12 @@ import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 import FormControl from '@material-ui/core/FormControl';
 import Button from '@material-ui/core/Button';
-import { makeStyles } from '@material-ui/core/styles';
+import { useStyles, submitButtonStyles } from './styles/EditMovieStyles';
 import Loading from '../Loading';
+import * as actions from '../../redux/actions';
 
-const useStyles = makeStyles(theme => ({
-  root: {
-    overflowY: 'scroll',
-  },
-  paper: {
-    margin: '20px auto',
-    background: '#fafafa',
-    width: '80vw',
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    padding: '20px 3%',
-
-    '& form': {
-      '& div': {
-        marginBottom: '10px',
-      },
-    },
-    [theme.breakpoints.up(710)]: {
-      width: '60vw',
-    },
-  },
-  button: {
-    background: '#373737',
-    color: '#fafafa',
-    marginTop: '50px',
-    '&:hover': {
-      background: '#373737',
-    },
-  },
-}));
-
-const submitButtonStyles = makeStyles(theme => ({
-  root: {
-    background: '#373737',
-    color: '#f6f6f6',
-    '&:hover': {
-      backgroundColor: '#373737',
-    },
-  },
-}));
-
-function EditMovie({
-  data: {
+function EditMovie({ editing, loading, closeEditForm, editMovie }) {
+  const {
     movie_id,
     title,
     year,
@@ -63,14 +22,7 @@ function EditMovie({
     rating,
     run_time: run_time_seconds,
     main_actors,
-  },
-  editing,
-  setEditing,
-  loading,
-  setLoading,
-  setError,
-  setOriginalList,
-}) {
+  } = editing;
   const run_time = calculateRunTime(run_time_seconds);
   const [formInput, setFormInput] = useState({
     title,
@@ -125,70 +77,21 @@ function EditMovie({
   };
   const handleEditMovie = ev => {
     ev.preventDefault();
-    setLoading(true);
-    const {
-      title,
-      year: yearString,
-      genre,
-      rating,
-      run_time: run_time_obj,
-    } = formInput;
-    const year = Number(yearString);
-    const run_time =
-      run_time_obj.hours * 3600 +
-      run_time_obj.minutes * 60 +
-      run_time_obj.seconds;
-    const editedMovie = {
-      title,
-      year,
-      genre,
-      rating,
-      run_time,
-    };
-    if (mainActorList.length) editedMovie.main_actors = mainActorList;
-    for (let [key, value] of Object.entries(editedMovie)) {
-      if (!value) {
-        return setError(`Missing field: ${key}`);
-      }
-    }
-    axios
-      .put(
-        `https://homework.eegapis.com/movies/${movie_id}?api_key=${process.env.REACT_APP_API_KEY}`,
-        editedMovie
-      )
-      .then(res => {
-        setOriginalList(prev =>
-          prev.map(movie => {
-            if (movie.movie_id === movie_id) {
-              return { ...res.data, movie_id };
-            }
-            return movie;
-          })
-        );
-      })
-      .then(() => handleClose())
-      .catch(err => {
-        if (err.response && err.response.data) {
-          setError(err.response.data.message);
-        } else {
-          setError('There was a problem while editing movie.');
-        }
-        setLoading(false);
-      });
+    editMovie({ ...formInput, movie_id, main_actors: mainActorList });
   };
   function handleClose(ev, reason) {
-    setEditing(false);
+    closeEditForm();
   }
   return (
     <Modal
       className={classes.root}
-      open={editing}
+      open={Boolean(editing)}
       closeAfterTransition
       BackdropComponent={BackDrop}
       BackdropProps={{ timeout: 500 }}
       onClose={handleClose}
     >
-      <Fade in={editing}>
+      <Fade in={Boolean(editing)}>
         <Paper elevation={2} component="section" className={classes.paper}>
           {loading ? (
             <Loading />
@@ -322,7 +225,7 @@ function EditMovie({
 }
 
 EditMovie.propTypes = {
-  data: PropTypes.shape({
+  editing: PropTypes.shape({
     movie_id: PropTypes.string,
     title: PropTypes.string,
     year: PropTypes.number,
@@ -331,12 +234,17 @@ EditMovie.propTypes = {
     run_time: PropTypes.number,
     main_actors: PropTypes.array,
   }),
-  editing: PropTypes.bool,
-  setEditing: PropTypes.func,
+  editMovie: PropTypes.func,
+  closeEditForm: PropTypes.func,
   loading: PropTypes.bool,
-  setLoading: PropTypes.func,
-  setOriginalList: PropTypes.func,
-  setError: PropTypes.func,
 };
 
-export default EditMovie;
+const mapStateToProps = state => ({
+  editing: state.editing,
+  loading: state.loading,
+});
+
+export default connect(mapStateToProps, {
+  editMovie: actions.editMovie,
+  closeEditForm: actions.closeEditForm,
+})(EditMovie);

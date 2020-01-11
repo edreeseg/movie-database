@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import Movie from '../Movie';
 import Loading from '../Loading';
 import Typography from '@material-ui/core/Typography';
@@ -17,15 +18,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function MovieList({
-  movies,
-  pageNumber,
-  loading,
-  setLoading,
-  setError,
-  setOriginalList,
-  deleteMovie,
-}) {
+function MovieList({ movies, pageNumber, loading }) {
   const classes = useStyles();
   const generatePage = (arr, n) => {
     // Generate an array to represent the current page
@@ -53,15 +46,7 @@ function MovieList({
     <Paper classes={classes}>
       {movies.length ? (
         generatePage(movies, pageNumber).map(movie => (
-          <Movie
-            key={movie.movie_id}
-            data={movie}
-            deleteMovie={deleteMovie}
-            loading={loading}
-            setLoading={setLoading}
-            setError={setError}
-            setOriginalList={setOriginalList}
-          />
+          <Movie key={movie.movie_id} data={movie} />
         ))
       ) : (
         <Typography variant="h4">No Matching Movies Found</Typography>
@@ -74,10 +59,12 @@ MovieList.propTypes = {
   movies: PropTypes.array,
   pageNumber: PropTypes.number,
   loading: PropTypes.bool,
-  setLoading: PropTypes.func,
-  setError: PropTypes.func,
-  setOriginalList: PropTypes.func,
-  deleteMovie: PropTypes.func,
 };
 
-export default MovieList;
+const mapStateToProps = state => ({
+  movies: state.movies,
+  pageNumber: state.pageNumber,
+  loading: state.loading,
+});
+
+export default connect(mapStateToProps)(MovieList);

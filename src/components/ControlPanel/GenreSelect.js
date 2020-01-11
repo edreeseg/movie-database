@@ -1,17 +1,28 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import Checkbox from './Checkbox';
 import { useStyles } from './styles/GenreSelectStyles';
+import * as actions from '../../redux/actions';
 
-function GenreSelect({ genres, setCheckedGenres, checkedGenres }) {
+const genres = [
+  'action',
+  'comedy',
+  'drama',
+  'fantasy',
+  'horror',
+  'musical',
+  'romance',
+];
+
+function GenreSelect({ changeCheckedGenres, checkedGenres }) {
   const classes = useStyles();
   const handleGenreChange = ev => {
     // Make use of ES6 Map to keep track of which checkboxes have been selected
     const genre = ev.target.name;
-    const isChecked = ev.target.checked;
-    setCheckedGenres(map => new Map(map.set(genre, isChecked)));
+    changeCheckedGenres(genre);
   };
   return (
     <Grid classes={classes}>
@@ -40,9 +51,14 @@ function GenreSelect({ genres, setCheckedGenres, checkedGenres }) {
 }
 
 GenreSelect.propTypes = {
-  genres: PropTypes.array,
-  setCheckedGenres: PropTypes.func,
+  changeCheckedGenres: PropTypes.func,
   checkedGenres: PropTypes.instanceOf(Map),
 };
 
-export default GenreSelect;
+const mapStateToProps = state => ({
+  checkedGenres: state.checkedGenres,
+});
+
+export default connect(mapStateToProps, {
+  changeCheckedGenres: actions.changeCheckedGenres,
+})(GenreSelect);

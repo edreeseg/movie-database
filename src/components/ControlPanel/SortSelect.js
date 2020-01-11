@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import {
   MdSortByAlpha,
   MdDateRange,
@@ -30,32 +31,13 @@ const strips = [
   },
 ];
 
-function SortSelect({
-  sortValue,
-  setSortValue,
-  controlPanelOpen,
-  setControlPanelOpen,
-  controlPanelHeight,
-}) {
-  const classes = useStyles({ controlPanelHeight });
-  const handleDrawer = ev => {
-    // If the toggle FilmStrip is clicked, open control panel
-    setControlPanelOpen(prev => !prev);
-  };
-  const handleSelection = value => {
-    // Update which criteria user wishes to sort by, if any
-    setSortValue(prev => (prev === value ? null : value));
-  };
+function SortSelect({ controlPanelOpen }) {
+  const classes = useStyles();
   return (
     <section className={classes.root}>
       {strips.map(info => {
         return (
-          <FilmStrip
-            key={info.text}
-            selected={sortValue === info.text}
-            onClick={() => handleSelection(info.text)}
-            controlPanelHeight={controlPanelHeight}
-          >
+          <FilmStrip key={info.text} name={info.text}>
             <h4>{info.text}</h4>
             <info.icon />
           </FilmStrip>
@@ -63,11 +45,7 @@ function SortSelect({
       })}
       {/* Because it is used to toggle the panel, this final FilmStrip will
       always be visible */}
-      <FilmStrip
-        toggle
-        onClick={handleDrawer}
-        controlPanelHeight={controlPanelHeight}
-      >
+      <FilmStrip toggle>
         {controlPanelOpen ? <MdClose /> : <MdMenu />}
       </FilmStrip>
     </section>
@@ -75,10 +53,11 @@ function SortSelect({
 }
 
 SortSelect.propTypes = {
-  sortValue: PropTypes.string,
-  setSortValue: PropTypes.func,
   controlPanelOpen: PropTypes.bool,
-  setControlPanelOpen: PropTypes.func,
 };
 
-export default SortSelect;
+const mapStateToProps = state => ({
+  controlPanelOpen: state.controlPanelOpen,
+});
+
+export default connect(mapStateToProps)(SortSelect);

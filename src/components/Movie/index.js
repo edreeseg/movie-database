@@ -1,70 +1,23 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import ExpansionPanel from '@material-ui/core/ExpansionPanel';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import Typography from '@material-ui/core/Typography';
 import Container from '@material-ui/core/Container';
-import { makeStyles } from '@material-ui/core/styles';
 import { MdExpandMore, MdDeleteForever } from 'react-icons/md';
 import { FaRegEdit } from 'react-icons/fa';
-import EditMovie from '../EditMovie';
+import * as actions from '../../redux/actions';
+import {
+  useStyles,
+  usePanelDetailsStyles,
+  useButtonContainerStyles,
+} from './styles/MovieStyles';
+import { EditMovie } from '../';
 
-const useStyles = makeStyles(theme => ({
-  root: {
-    fontSize: theme.typography.pxToRem(15),
-    fontWeight: theme.typography.fontWeightRegular,
-  },
-  content: {
-    width: '90%',
-    '& p': {
-      textOverflow: 'ellipsis',
-      whiteSpace: 'normal', // Set to `nowrap` to truncate string and keep title on one line
-      overflow: 'hidden',
-    },
-  },
-}));
-
-const usePanelDetailsStyles = makeStyles(theme => ({
-  root: {
-    position: 'relative',
-    whiteSpace: 'normal',
-  },
-}));
-
-const useButtonContainerStyles = makeStyles(theme => ({
-  root: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    width: '100px',
-    position: 'absolute',
-    bottom: '20px',
-    right: '10px',
-    transition: 'opacity .3s',
-    '& svg': {
-      fontSize: '30px',
-      '&:hover': {
-        cursor: 'pointer',
-      },
-      '&:active': {
-        transform: 'translateY(1px)',
-      },
-    },
-  },
-}));
-
-function Movie({
-  data,
-  deleteMovie,
-  loading,
-  setLoading,
-  setError,
-  setOriginalList,
-}) {
-  const [editing, setEditing] = useState(false);
+function Movie({ data, editing, openEditForm, deleteMovie }) {
   const [panelOpen, setPanelOpen] = useState(false);
-  // Basic list to display individual movie information
   const classes = useStyles();
   const buttonContainerClasses = useButtonContainerStyles();
   const panelDetailsClasses = usePanelDetailsStyles();
@@ -73,17 +26,7 @@ function Movie({
   };
   return (
     <ExpansionPanel onChange={handleChange}>
-      {editing ? (
-        <EditMovie
-          data={data}
-          editing={editing}
-          setEditing={setEditing}
-          loading={loading}
-          setLoading={setLoading}
-          setError={setError}
-          setOriginalList={setOriginalList}
-        />
-      ) : null}
+      {editing ? <EditMovie /> : null}
       <ExpansionPanelSummary
         expandIcon={<MdExpandMore />}
         id={`${data.title}-heading`}
@@ -120,7 +63,7 @@ function Movie({
             classes={buttonContainerClasses}
             style={{ opacity: panelOpen ? 1 : 0 }}
           >
-            <FaRegEdit onClick={() => setEditing(true)} />
+            <FaRegEdit onClick={() => openEditForm(data)} />
             <MdDeleteForever onClick={() => deleteMovie(data.movie_id)} />
           </Container>
         </Typography>
@@ -139,7 +82,24 @@ Movie.propTypes = {
     rating: PropTypes.string,
     main_actors: PropTypes.array,
   }),
+  editing: PropTypes.shape({
+    movie_id: PropTypes.string,
+    title: PropTypes.string,
+    year: PropTypes.number,
+    genre: PropTypes.string,
+    run_time: PropTypes.number,
+    rating: PropTypes.string,
+    main_actors: PropTypes.array,
+  }),
+  openEditForm: PropTypes.func,
   deleteMovie: PropTypes.func,
 };
 
-export default Movie;
+const mapStateToProps = state => ({
+  editing: state.editing,
+});
+
+export default connect(mapStateToProps, {
+  openEditForm: actions.openEditForm,
+  deleteMovie: actions.deleteMovie,
+})(Movie);

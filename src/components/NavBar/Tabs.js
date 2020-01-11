@@ -1,8 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import { makeStyles } from '@material-ui/core/styles';
+import * as actions from '../../redux/actions';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -24,11 +26,11 @@ const useTabStyles = makeStyles(theme => ({
   },
 }));
 
-function TabsContainer({ tabIndex, setTabIndex }) {
+function TabsContainer({ tabIndex, changeTabIndex }) {
   // Creation of tabs to update view below the navbar, when a user would like to
   // switch between viewing movies and adding a new movie
   const handleChange = (ev, value) => {
-    setTabIndex(value);
+    changeTabIndex(value);
   };
   const classes = useStyles();
   const tabClasses = useTabStyles();
@@ -57,7 +59,13 @@ function TabsContainer({ tabIndex, setTabIndex }) {
 
 TabsContainer.propTypes = {
   tabIndex: PropTypes.number,
-  setTabIndex: PropTypes.func,
+  changeTabIndex: PropTypes.func,
 };
 
-export default TabsContainer;
+const mapStateToProps = state => ({
+  tabIndex: state.tabIndex,
+});
+
+export default connect(mapStateToProps, {
+  changeTabIndex: actions.changeTabIndex,
+})(TabsContainer);
