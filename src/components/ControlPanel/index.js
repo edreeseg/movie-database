@@ -34,6 +34,10 @@ function ControlPanel({
   const classes = controlPanelStyles();
   const labelClasses = labelStyles();
   const buttonClasses = buttonStyles();
+  const handleSubmit = ev => {
+    ev.preventDefault();
+    searchMovies(searchQuery);
+  };
   return (
     <Container
       className={`${classes.root} ${
@@ -44,7 +48,7 @@ function ControlPanel({
       <FormControl
         component="form"
         className={classes.form}
-        onSubmit={() => searchMovies(searchQuery)}
+        onSubmit={handleSubmit}
       >
         <Container className={classes.queryContainer}>
           <InputLabel classes={labelClasses}>

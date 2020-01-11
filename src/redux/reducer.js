@@ -106,6 +106,7 @@ const reducer = (state = initialState, action) => {
       return {
         ...state,
         movies: handleMovieSearch(state, action.payload),
+        sortBy: action.payload.length >= 2 ? null : state.sortBy,
         loading: false,
         error: null,
       };
@@ -187,53 +188,55 @@ function handleMovieSearch(state, query = '') {
   let newList = originalList.filter(
     movie => checkedRatings.get(movie.rating) && checkedGenres.get(movie.genre)
   );
-  const searchOptions = {
-    shouldSort: true,
-    threshold: 0.6,
-    location: 0,
-    distance: 100,
-    maxPatternLength: 32,
-    minMatchCharLength: 2,
-    keys: ['title', 'main_actors'],
-  };
-  if (query.length < 2) {
+  if (query.length >= 2) {
+    const searchOptions = {
+      shouldSort: true,
+      threshold: 0.6,
+      location: 0,
+      distance: 100,
+      maxPatternLength: 32,
+      minMatchCharLength: 2,
+      keys: ['title', 'main_actors'],
+    };
     const fuse = new Fuse(newList, searchOptions);
     newList = fuse.search(query);
+  } else {
+    // Will mutate array that was newly created by .filter
+    newList.sort((a, b) => {
+      switch (sortBy) {
+        case 'A-Z':
+          if (orderIsDescending) {
+            return a.title > b.title ? 1 : -1;
+          }
+          return b.title > a.title ? 1 : -1;
+        case 'Year':
+          if (orderIsDescending) {
+            return a.year - b.year;
+          }
+          return b.year - a.year;
+        case 'Runtime':
+          if (orderIsDescending) {
+            return a.run_time - b.run_time;
+          }
+          return b.run_time - a.run_time;
+        case 'Rating':
+          const ratingValues = {
+            G: 0,
+            PG: 1,
+            'PG-13': 2,
+            R: 3,
+            'NC-17': 4,
+          };
+          if (orderIsDescending) {
+            return ratingValues[a.rating] - ratingValues[b.rating];
+          }
+          return ratingValues[b.rating] - ratingValues[a.rating];
+        default:
+          return 0;
+      }
+    });
   }
-  // Will mutate array that was newly created by .filter
-  return newList.sort((a, b) => {
-    switch (sortBy) {
-      case 'A-Z':
-        if (orderIsDescending) {
-          return a.title > b.title ? 1 : -1;
-        }
-        return b.title > a.title ? 1 : -1;
-      case 'Year':
-        if (orderIsDescending) {
-          return a.year - b.year;
-        }
-        return b.year - a.year;
-      case 'Runtime':
-        if (orderIsDescending) {
-          return a.run_time - b.run_time;
-        }
-        return b.run_time - a.run_time;
-      case 'Rating':
-        const ratingValues = {
-          G: 0,
-          PG: 1,
-          'PG-13': 2,
-          R: 3,
-          'NC-17': 4,
-        };
-        if (orderIsDescending) {
-          return ratingValues[a.rating] - ratingValues[b.rating];
-        }
-        return ratingValues[b.rating] - ratingValues[a.rating];
-      default:
-        return 0;
-    }
-  });
+  return newList;
 }
 
 export default reducer;
