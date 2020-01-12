@@ -33,9 +33,15 @@ export const controlPanelStyles = makeStyles(theme => ({
   },
   queryContainer: {
     height: '75px',
+    [theme.breakpoints.up(710)]: {
+      marginLeft: '10%',
+    },
   },
   queryInput: {
     marginLeft: '5%',
+    [theme.breakpoints.up(710)]: {
+      marginLeft: '20px',
+    },
   },
   checkboxContainer: {
     display: 'flex',
@@ -43,6 +49,9 @@ export const controlPanelStyles = makeStyles(theme => ({
     justifyContent: 'space-between',
     [theme.breakpoints.up(424)]: {
       flexDirection: 'row',
+    },
+    [theme.breakpoints.up(950)]: {
+      width: '80%',
     },
   },
 }));
@@ -59,10 +68,15 @@ export const labelStyles = makeStyles(theme => ({
 
 export const buttonStyles = makeStyles(theme => ({
   root: {
+    margin: '15px 0',
     background: '#373737',
     color: '#f6f6f6',
     '&:hover': {
       backgroundColor: '#373737',
+    },
+    [theme.breakpoints.up(710)]: {
+      margin: '15px auto',
+      width: '25%',
     },
   },
 }));

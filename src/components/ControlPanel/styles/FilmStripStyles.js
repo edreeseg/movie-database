@@ -19,11 +19,10 @@ export const useStyles = makeStyles(theme => ({
       flexDirection: 'column',
     },
   },
-  controlPanelToggle: {
+  controlPanelToggle: props => ({
     position: 'absolute',
     width: '75px',
     height: '100px',
-    top: '100%',
     right: '0',
     background: '#373737',
     display: 'flex',
@@ -39,12 +38,12 @@ export const useStyles = makeStyles(theme => ({
     },
     [theme.breakpoints.up(710)]: {
       position: 'absolute',
-      top: '500%',
       left: 'calc(100% + ((100vw - 100%) / 2) - 3%)',
       transform: 'translateX(-100%)',
+      maxHeight: 'none',
       height: '100px',
     },
-  },
+  }),
   inner: {
     height: '75%',
     width: '94%',
@@ -53,12 +52,21 @@ export const useStyles = makeStyles(theme => ({
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
+    '&:hover': {
+      cursor: 'pointer',
+    },
     '& svg': {
-      fontSize: '40px',
+      fontSize: '20vw',
+      [theme.breakpoints.up(235)]: {
+        fontSize: '40px',
+      },
     },
     '& h4': {
-      fontSize: '13px',
+      fontSize: '5.3vw',
       margin: '0',
+      [theme.breakpoints.up(235)]: {
+        fontSize: '13px',
+      },
     },
     [theme.breakpoints.up(424)]: {
       height: '94%',
@@ -77,6 +85,13 @@ export const useStyles = makeStyles(theme => ({
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
+    '&:hover': {
+      cursor: 'pointer',
+      background: '#e5e5e5',
+    },
+    '&:active': {
+      background: 'rgb(208, 208, 208)',
+    },
     '& svg': {
       fontSize: '40px',
     },

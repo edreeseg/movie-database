@@ -26,14 +26,29 @@ export const useButtonContainerStyles = makeStyles(theme => ({
   root: {
     display: 'flex',
     alignItems: 'center',
-    justifyContent: 'space-between',
-    width: '100px',
-    position: 'absolute',
-    bottom: '20px',
-    right: '10px',
+    justifyContent: 'space-evenly',
     transition: 'opacity .3s',
+    width: '100%',
+    marginTop: '20px',
+    [theme.breakpoints.up(250)]: {
+      position: 'absolute',
+      bottom: '10px',
+      right: '3%',
+      width: '100px',
+    },
+    [theme.breakpoints.up(500)]: {
+      width: '125px',
+      bottom: '20px',
+      right: '20px',
+    },
     '& svg': {
-      fontSize: '30px',
+      fontSize: '15vw',
+      [theme.breakpoints.up(250)]: {
+        fontSize: '30px',
+      },
+      [theme.breakpoints.up(500)]: {
+        fontSize: '40px',
+      },
       '&:hover': {
         cursor: 'pointer',
       },

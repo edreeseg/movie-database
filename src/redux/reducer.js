@@ -69,6 +69,8 @@ const reducer = (state = initialState, action) => {
         ...state,
         movies: [...state.movies, action.payload],
         originalList: [...state.originalList, action.payload],
+        tabIndex: 0,
+        controlPanelOpen: false,
         loading: false,
         error: null,
       };
@@ -107,6 +109,7 @@ const reducer = (state = initialState, action) => {
         ...state,
         movies: handleMovieSearch(state, action.payload),
         sortBy: action.payload.length >= 2 ? null : state.sortBy,
+        controlPanelOpen: false,
         loading: false,
         error: null,
       };
@@ -120,8 +123,9 @@ const reducer = (state = initialState, action) => {
       const prev = state.checkedRatings.get(action.payload);
       return {
         ...state,
-        checkedRatings: new Map(
-          state.checkedRatings.set(action.payload, !prev)
+        checkedRatings: new Map(state.checkedRatings).set(
+          action.payload,
+          !prev
         ),
       };
     }
@@ -129,7 +133,7 @@ const reducer = (state = initialState, action) => {
       const prev = state.checkedGenres.get(action.payload);
       return {
         ...state,
-        checkedGenres: new Map(state.checkedGenres.set(action.payload, !prev)),
+        checkedGenres: new Map(state.checkedGenres).set(action.payload, !prev),
       };
     }
     case SET_SORT_BY:
@@ -143,7 +147,7 @@ const reducer = (state = initialState, action) => {
         orderIsDescending: !state.orderIsDescending,
       };
     case CHANGE_PAGE_BY_ONE: {
-      const max = Math.floor(state.movies.length / 10) || 1;
+      const max = Math.ceil(state.movies.length / 10) || 1;
       let newPage = state.pageNumber;
       if (action.payload && state.pageNumber !== max) {
         newPage++;
@@ -156,7 +160,7 @@ const reducer = (state = initialState, action) => {
       };
     }
     case SEND_PAGE_TO_END:
-      const max = Math.floor(state.movies.length / 10) || 1;
+      const max = Math.ceil(state.movies.length / 10) || 1;
       return {
         ...state,
         pageNumber: action.payload ? max : 1,

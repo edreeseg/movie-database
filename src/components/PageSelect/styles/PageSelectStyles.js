@@ -17,7 +17,20 @@ export const useStyles = makeStyles(theme => ({
       display: 'flex',
       justifyContent: 'center',
       alignItems: 'center',
-      background: 'transparent',
+      background: '#f2f2f2',
+      '&:hover': {
+        cursor: 'pointer',
+        background: '#e5e5e5',
+      },
+      '&:active': {
+        background: 'rgb(208, 208, 208)',
+      },
+      '&:focus': {
+        outline: 0,
+      },
+      '&:disabled': {
+        background: '#f2f2f2',
+      },
       '& svg': {
         fontSize: '30px',
       },

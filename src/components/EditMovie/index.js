@@ -13,7 +13,7 @@ import { useStyles, submitButtonStyles } from './styles/EditMovieStyles';
 import Loading from '../Loading';
 import * as actions from '../../redux/actions';
 
-function EditMovie({ editing, loading, closeEditForm, editMovie }) {
+function EditMovie({ data, editing, loading, closeEditForm, editMovie }) {
   const {
     movie_id,
     title,
@@ -85,7 +85,7 @@ function EditMovie({ editing, loading, closeEditForm, editMovie }) {
   return (
     <Modal
       className={classes.root}
-      open={Boolean(editing)}
+      open={editing && editing.movie_id === data.movie_id}
       closeAfterTransition
       BackdropComponent={BackDrop}
       BackdropProps={{ timeout: 500 }}
@@ -225,6 +225,15 @@ function EditMovie({ editing, loading, closeEditForm, editMovie }) {
 }
 
 EditMovie.propTypes = {
+  data: PropTypes.shape({
+    movie_id: PropTypes.string,
+    title: PropTypes.string,
+    year: PropTypes.number,
+    genre: PropTypes.string,
+    rating: PropTypes.string,
+    run_time: PropTypes.number,
+    main_actors: PropTypes.array,
+  }),
   editing: PropTypes.shape({
     movie_id: PropTypes.string,
     title: PropTypes.string,

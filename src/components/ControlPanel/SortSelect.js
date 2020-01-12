@@ -16,18 +16,22 @@ const strips = [
   {
     text: 'A-Z',
     icon: MdSortByAlpha,
+    title: 'Sort alphabetically',
   },
   {
     text: 'Year',
     icon: MdDateRange,
+    title: 'Sort by release year',
   },
   {
     text: 'Runtime',
     icon: MdWatchLater,
+    title: 'Sort by run time',
   },
   {
     text: 'Rating',
     icon: MdChildCare,
+    title: 'Sort by rating',
   },
 ];
 
@@ -37,7 +41,7 @@ function SortSelect({ controlPanelOpen }) {
     <section className={classes.root}>
       {strips.map(info => {
         return (
-          <FilmStrip key={info.text} name={info.text}>
+          <FilmStrip key={info.text} name={info.text} title={info.title}>
             <h4>{info.text}</h4>
             <info.icon />
           </FilmStrip>
@@ -45,7 +49,10 @@ function SortSelect({ controlPanelOpen }) {
       })}
       {/* Because it is used to toggle the panel, this final FilmStrip will
       always be visible */}
-      <FilmStrip toggle>
+      <FilmStrip
+        toggle
+        title={controlPanelOpen ? 'Close control panel' : 'Open control panel'}
+      >
         {controlPanelOpen ? <MdClose /> : <MdMenu />}
       </FilmStrip>
     </section>

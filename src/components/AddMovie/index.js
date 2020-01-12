@@ -11,13 +11,28 @@ import * as actions from '../../redux/actions';
 
 const useStyles = makeStyles(theme => ({
   root: {
-    marginTop: '70px',
+    marginTop: '40px',
+    marginBottom: '25px',
+    width: '75%',
+    maxWidth: '600px',
+    position: 'absolute',
+    left: '50%',
+    transform: 'translateX(-50%)',
+    '& div': {
+      marginBottom: '5px',
+    },
   },
 }));
 
 const useLoadingStyles = makeStyles(theme => ({
   root: {
-    marginTop: '70px',
+    marginTop: '40px',
+    marginBottom: '25px',
+    width: '75%',
+    maxWidth: '600px',
+    position: 'absolute',
+    left: '50%',
+    transform: 'translateX(-50%)',
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',

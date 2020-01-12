@@ -24,9 +24,27 @@ function Movie({ data, editing, openEditForm, deleteMovie }) {
   const handleChange = () => {
     setPanelOpen(prev => !prev);
   };
+  function calculateRunTime(n) {
+    let sum = n;
+    const time = [];
+    const hours = Math.floor(sum / 3600);
+    time.push(hours);
+    sum -= hours * 3600;
+    const minutes = Math.floor(sum / 60);
+    time.push(minutes);
+    sum -= minutes * 60;
+    const seconds = sum;
+    time.push(seconds);
+    for (let i = 0; i < time.length; i++) {
+      if (String(time[i]).length === 1) {
+        time[i] = '0' + time[i];
+      }
+    }
+    return time.join(':');
+  }
   return (
     <ExpansionPanel onChange={handleChange}>
-      {editing ? <EditMovie /> : null}
+      {editing ? <EditMovie data={data} /> : null}
       <ExpansionPanelSummary
         expandIcon={<MdExpandMore />}
         id={`${data.title}-heading`}
@@ -47,7 +65,7 @@ function Movie({ data, editing, openEditForm, deleteMovie }) {
           </p>
           <p>
             <span>Run Time: </span>
-            {data.run_time}
+            {calculateRunTime(data.run_time)}
           </p>
           <p>
             <span>Rating: </span>

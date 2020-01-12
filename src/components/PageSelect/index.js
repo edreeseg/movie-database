@@ -8,7 +8,13 @@ import { MdArrowForward, MdArrowBack } from 'react-icons/md';
 import * as actions from '../../redux/actions';
 import './styles/PageSelect.css';
 
-function PageSelect({ pageNumber, movies, changePageByOne, sendPageToEnd }) {
+function PageSelect({
+  pageNumber,
+  movies,
+  tabIndex,
+  changePageByOne,
+  sendPageToEnd,
+}) {
   // Component to handle changing page while viewing movie list
   const classes = useStyles();
   const changeByOne = forward => {
@@ -19,13 +25,17 @@ function PageSelect({ pageNumber, movies, changePageByOne, sendPageToEnd }) {
     // Handle jumping to the beginning or end of the list
     sendPageToEnd(forward);
   };
-  const pageTotal = Math.floor(movies.length / 10) || 1;
+  const pageTotal = Math.ceil(movies.length / 10) || 1;
   return (
-    <Paper elevation={4} classes={classes}>
-      <button onClick={() => goToEnd(false)}>
+    <Paper
+      elevation={4}
+      classes={classes}
+      style={tabIndex ? { display: 'none' } : null}
+    >
+      <button onClick={() => goToEnd(false)} disabled={pageNumber === 1}>
         <FaFastBackward />
       </button>
-      <button onClick={() => changeByOne(false)}>
+      <button onClick={() => changeByOne(false)} disabled={pageNumber === 1}>
         <MdArrowBack />
       </button>
       <div id="page-display">
@@ -33,10 +43,13 @@ function PageSelect({ pageNumber, movies, changePageByOne, sendPageToEnd }) {
           {pageNumber} of {pageTotal}
         </span>
       </div>
-      <button onClick={() => changeByOne(true)}>
+      <button
+        onClick={() => changeByOne(true)}
+        disabled={pageNumber === pageTotal}
+      >
         <MdArrowForward />
       </button>
-      <button onClick={() => goToEnd(true)}>
+      <button onClick={() => goToEnd(true)} disabled={pageNumber === pageTotal}>
         <FaFastForward />
       </button>
     </Paper>
@@ -46,6 +59,7 @@ function PageSelect({ pageNumber, movies, changePageByOne, sendPageToEnd }) {
 PageSelect.propTypes = {
   pageNumber: PropTypes.number,
   movies: PropTypes.array,
+  taxIndex: PropTypes.number,
   changePageByOne: PropTypes.func,
   sendPageToEnd: PropTypes.func,
 };
@@ -53,6 +67,7 @@ PageSelect.propTypes = {
 const mapStateToProps = state => ({
   pageNumber: state.pageNumber,
   movies: state.movies,
+  tabIndex: state.tabIndex,
 });
 
 export default connect(mapStateToProps, {
