@@ -25,7 +25,7 @@ export const useStyles = makeStyles(theme => ({
     alignItems: 'center',
     margin: '15px 5%',
     padding: '5px 10px',
-    border: '2px solid #3f51b5',
+    border: '2px solid #09afdf',
     [theme.breakpoints.up(710)]: {
       margin: '15px 10%',
     },
