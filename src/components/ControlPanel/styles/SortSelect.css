@@ -1,0 +1,29 @@
+/* Animation intended to draw attention to control panel toggle - potential alternative -> bounce? */
+
+.control-panel-toggle-icon {
+  animation: toggle-attn 4s infinite;
+}
+
+@keyframes toggle-attn {
+  from {
+    transform: scale(1);
+    transform-origin: center center;
+    animation-timing-function: ease-out;
+  }
+  5% {
+    transform: scale(0.87);
+    animation-timing-function: ease-in;
+  }
+  8.5% {
+    transform: scale(0.95);
+    animation-timing-function: ease-out;
+  }
+  16.5% {
+    transform: scale(0.83);
+    animation-timing-function: ease-in;
+  }
+  22.5% {
+    transform: scale(1);
+    animation-timing-function: ease-out;
+  }
+}

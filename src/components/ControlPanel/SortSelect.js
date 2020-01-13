@@ -11,6 +11,7 @@ import {
 } from 'react-icons/md';
 import FilmStrip from './FilmStrip';
 import { useStyles } from './styles/SortSelectStyles';
+import './styles/SortSelect.css';
 
 const strips = [
   {
@@ -53,7 +54,11 @@ function SortSelect({ controlPanelOpen }) {
         toggle
         title={controlPanelOpen ? 'Close control panel' : 'Open control panel'}
       >
-        {controlPanelOpen ? <MdClose /> : <MdMenu />}
+        {controlPanelOpen ? (
+          <MdClose className="control-panel-toggle-icon" />
+        ) : (
+          <MdMenu className="control-panel-toggle-icon" />
+        )}
       </FilmStrip>
     </section>
   );
