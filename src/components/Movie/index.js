@@ -56,7 +56,7 @@ function Movie({ data, editing, openEditForm, deleteMovie }) {
           className={classes.root}
           style={{ fontSize: panelOpen ? '1.5rem' : '0.9375rem' }}
         >
-          {data.title}
+          {data.title} ({data.year})
         </Typography>
       </ExpansionPanelSummary>
       <ExpansionPanelDetails classes={panelDetailsClasses}>

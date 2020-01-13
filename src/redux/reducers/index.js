@@ -77,7 +77,7 @@ const reducer = (state = initialState, action) => {
     case ADD_MOVIE:
       return {
         ...state,
-        originalList: [...state.originalList, action.payload],
+        originalList: [action.payload, ...state.originalList],
         tabIndex: 0,
         controlPanelOpen: false,
         loading: false,
@@ -118,7 +118,7 @@ const reducer = (state = initialState, action) => {
     case CHANGE_SEARCH_QUERY:
       return { ...state, searchQuery: action.payload };
     case CHANGE_TAB_INDEX:
-      return { ...state, tabIndex: action.payload };
+      return { ...state, tabIndex: action.payload, controlPanelOpen: false };
     case CONTROL_PANEL_HEIGHT_CHANGE:
       return { ...state, controlPanelHeight: action.payload };
     case CONTROL_PANEL_TOGGLE:

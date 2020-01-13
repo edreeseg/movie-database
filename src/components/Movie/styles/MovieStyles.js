@@ -56,12 +56,11 @@ export const useButtonContainerStyles = makeStyles(theme => ({
     transition: 'opacity .3s',
     width: '100%',
     marginTop: '20px',
-    [theme.breakpoints.up(300)]: {
+    [theme.breakpoints.up(320)]: {
       position: 'absolute',
-      bottom: '50%',
+      top: '0',
       right: '10px',
       width: '100px',
-      transform: 'translateY(50%)',
     },
     [theme.breakpoints.up(500)]: {
       width: '150px',

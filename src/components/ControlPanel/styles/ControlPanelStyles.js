@@ -5,6 +5,8 @@ export const controlPanelStyles = makeStyles(theme => ({
     display: 'flex',
     flexDirection: 'column',
     position: 'absolute',
+    width: '100%',
+    maxWidth: 'none',
     left: '0',
     top: '56px',
     borderBottom: '3px solid black',
@@ -48,7 +50,7 @@ export const controlPanelStyles = makeStyles(theme => ({
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'space-between',
-    [theme.breakpoints.up(476)]: {
+    [theme.breakpoints.up(495)]: {
       flexDirection: 'row',
     },
     [theme.breakpoints.up(950)]: {

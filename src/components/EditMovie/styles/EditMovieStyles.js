@@ -5,13 +5,13 @@ export const useStyles = makeStyles(theme => ({
     overflowY: 'scroll',
   },
   paper: {
-    margin: '20px auto',
+    margin: '50px auto',
     background: '#fafafa',
     width: '80vw',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
-    padding: '20px 3%',
+    padding: '30px 3%',
 
     '& form': {
       '& div': {

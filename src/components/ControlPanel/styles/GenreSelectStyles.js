@@ -4,12 +4,13 @@ export const useStyles = makeStyles(theme => ({
   root: {
     display: 'flex',
     flexWrap: 'wrap',
+    maxWidth: '600px',
     justifyContent: 'center',
     alignItems: 'center',
     width: '100%',
     padding: '0',
     paddingTop: '15px',
-    [theme.breakpoints.up(476)]: {
+    [theme.breakpoints.up(495)]: {
       width: '50%',
       paddingLeft: '5%',
       paddingBottom: '0',
