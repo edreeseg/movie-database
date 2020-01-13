@@ -21,6 +21,7 @@ import * as actions from '../../redux/actions';
 function ControlPanel({
   searchQuery,
   controlPanelOpen,
+  controlPanelHeight,
   changeControlPanelHeight,
   changeSearchQuery,
   searchMovies,
@@ -30,8 +31,10 @@ function ControlPanel({
   const [resizeListener, sizes] = useResizeAware();
   useEffect(() => {
     // If the height ever changes, update state.
-    changeControlPanelHeight(sizes.height);
-  }, [sizes.height, changeControlPanelHeight]);
+    if (sizes.height !== controlPanelHeight) {
+      changeControlPanelHeight(sizes.height);
+    }
+  }, [sizes.height, changeControlPanelHeight, controlPanelHeight]);
   const classes = controlPanelStyles();
   const labelClasses = labelStyles();
   const buttonClasses = buttonStyles();
@@ -79,6 +82,7 @@ function ControlPanel({
 
 ControlPanel.propTypes = {
   controlPanelOpen: PropTypes.bool,
+  controlPanelHeight: PropTypes.number,
   changeControlPanelHeight: PropTypes.func,
   searchMovies: PropTypes.func,
 };
@@ -86,6 +90,7 @@ ControlPanel.propTypes = {
 const mapStateToProps = state => ({
   searchQuery: state.searchQuery,
   controlPanelOpen: state.controlPanelOpen,
+  controlPanelHeight: state.controlPanelHeight,
 });
 
 export default connect(mapStateToProps, {

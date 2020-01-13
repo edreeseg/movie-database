@@ -48,7 +48,7 @@ export const controlPanelStyles = makeStyles(theme => ({
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'space-between',
-    [theme.breakpoints.up(424)]: {
+    [theme.breakpoints.up(476)]: {
       flexDirection: 'row',
     },
     [theme.breakpoints.up(950)]: {

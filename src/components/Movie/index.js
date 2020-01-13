@@ -18,7 +18,7 @@ import { EditMovie } from '../';
 
 function Movie({ data, editing, openEditForm, deleteMovie }) {
   const [panelOpen, setPanelOpen] = useState(false);
-  const classes = useStyles();
+  const classes = useStyles({ panelOpen });
   const buttonContainerClasses = useButtonContainerStyles();
   const panelDetailsClasses = usePanelDetailsStyles();
   const handleChange = () => {
@@ -51,40 +51,40 @@ function Movie({ data, editing, openEditForm, deleteMovie }) {
         aria-controls={`${data.title}-content`}
         classes={classes}
       >
-        <Typography className={classes.root}>{data.title}</Typography>
+        <Typography
+          variant="h2"
+          className={classes.root}
+          style={{ fontSize: panelOpen ? '1.5rem' : '0.9375rem' }}
+        >
+          {data.title}
+        </Typography>
       </ExpansionPanelSummary>
       <ExpansionPanelDetails classes={panelDetailsClasses}>
-        <Typography component="div">
-          <p>
-            <span>Title: </span>
-            {data.title} <span>({data.year})</span>
-          </p>
-          <p>
-            <span>Genre: </span>
-            {data.genre[0].toUpperCase() + data.genre.slice(1)}
-          </p>
-          <p>
-            <span>Run Time: </span>
-            {calculateRunTime(data.run_time)}
-          </p>
-          <p>
-            <span>Rating: </span>
-            {data.rating}
-          </p>
-          {data.main_actors ? (
-            <>
-              <h4>Main Actors:</h4>
-              <p>{data.main_actors.join(', ')}</p>
-            </>
-          ) : null}
-          <Container
-            classes={buttonContainerClasses}
-            style={{ opacity: panelOpen ? 1 : 0 }}
-          >
-            <FaRegEdit onClick={() => openEditForm(data)} />
-            <MdDeleteForever onClick={() => deleteMovie(data.movie_id)} />
-          </Container>
-        </Typography>
+        <table>
+          <thead>
+            <tr>
+              <th>Genre</th>
+              <th>Rating</th>
+              <th>Run Time</th>
+              {data.main_actors ? <th>Main Actors</th> : null}
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>{data.genre[0].toUpperCase() + data.genre.slice(1)}</td>
+              <td>{data.rating}</td>
+              <td>{calculateRunTime(data.run_time)}</td>
+              {data.main_actors ? <td>{data.main_actors.join(', ')}</td> : null}
+            </tr>
+          </tbody>
+        </table>
+        <Container
+          classes={buttonContainerClasses}
+          style={{ opacity: panelOpen ? 1 : 0 }}
+        >
+          <FaRegEdit onClick={() => openEditForm(data)} />
+          <MdDeleteForever onClick={() => deleteMovie(data.movie_id)} />
+        </Container>
       </ExpansionPanelDetails>
     </ExpansionPanel>
   );

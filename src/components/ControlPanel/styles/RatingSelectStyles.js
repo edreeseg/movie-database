@@ -10,7 +10,7 @@ export const useStyles = makeStyles(theme => ({
     padding: '0',
     paddingBottom: '15px',
     borderBottom: '2px solid #373737',
-    [theme.breakpoints.up(424)]: {
+    [theme.breakpoints.up(476)]: {
       width: '50%',
       borderRight: '1px solid #373737',
       borderBottom: '0',

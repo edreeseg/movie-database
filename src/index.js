@@ -4,10 +4,14 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 import { createStore, applyMiddleware } from 'redux';
 import { Provider } from 'react-redux';
 import thunk from 'redux-thunk';
+import logger from 'redux-logger';
 import reducer from './redux/reducers';
 import App from './App';
-
-const store = createStore(reducer, applyMiddleware(thunk));
+const middleware = [thunk];
+if (process.env.NODE_ENV !== 'production') {
+  middleware.push(logger);
+}
+const store = createStore(reducer, applyMiddleware(...middleware));
 
 ReactDOM.render(
   <Provider store={store}>

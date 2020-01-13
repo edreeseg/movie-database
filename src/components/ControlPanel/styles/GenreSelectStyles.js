@@ -9,7 +9,7 @@ export const useStyles = makeStyles(theme => ({
     width: '100%',
     padding: '0',
     paddingTop: '15px',
-    [theme.breakpoints.up(424)]: {
+    [theme.breakpoints.up(476)]: {
       width: '50%',
       paddingLeft: '5%',
       paddingBottom: '0',

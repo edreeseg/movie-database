@@ -7,7 +7,8 @@ export const useStyles = makeStyles(theme => ({
   },
   content: {
     width: '90%',
-    '& p': {
+    '& h2': {
+      transition: 'font-size .3s',
       textOverflow: 'ellipsis',
       whiteSpace: 'normal', // Set to `nowrap` to truncate string and keep title on one line
       overflow: 'hidden',
@@ -19,6 +20,31 @@ export const usePanelDetailsStyles = makeStyles(theme => ({
   root: {
     position: 'relative',
     whiteSpace: 'normal',
+    display: 'flex',
+    flexDirection: 'column',
+    '& table': {
+      marginTop: '15px',
+      textAlign: 'left',
+      [theme.breakpoints.down(750)]: {
+        display: 'flex',
+        flexDirection: 'row',
+        '& thead': {
+          marginRight: '10%',
+        },
+        '& tr': {
+          display: 'flex',
+          flexDirection: 'column',
+        },
+        '& th': {
+          display: 'flex',
+          alignItems: 'center',
+        },
+        '& td': {
+          display: 'flex',
+          alignItems: 'center',
+        },
+      },
+    },
   },
 }));
 
@@ -30,16 +56,15 @@ export const useButtonContainerStyles = makeStyles(theme => ({
     transition: 'opacity .3s',
     width: '100%',
     marginTop: '20px',
-    [theme.breakpoints.up(250)]: {
+    [theme.breakpoints.up(300)]: {
       position: 'absolute',
-      bottom: '10px',
-      right: '3%',
+      bottom: '50%',
+      right: '10px',
       width: '100px',
+      transform: 'translateY(50%)',
     },
     [theme.breakpoints.up(500)]: {
-      width: '125px',
-      bottom: '20px',
-      right: '20px',
+      width: '150px',
     },
     '& svg': {
       fontSize: '15vw',
