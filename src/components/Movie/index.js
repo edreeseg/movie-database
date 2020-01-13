@@ -57,7 +57,7 @@ function Movie({ data, editing, openEditForm, deleteMovie }) {
         <Typography component="div">
           <p>
             <span>Title: </span>
-            {data.title} ({data.year})
+            {data.title} <span>({data.year})</span>
           </p>
           <p>
             <span>Genre: </span>

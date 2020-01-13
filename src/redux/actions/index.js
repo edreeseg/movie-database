@@ -4,10 +4,12 @@ export const LOADING = 'LOADING';
 export const ERROR = 'ERROR';
 export const CLEAR_ERROR = 'CLEAR_ERROR';
 export const GET_MOVIES = 'GET_MOVIES';
+export const UPDATE_MOVIE_LIST = 'UPDATE_MOVIE_LIST';
 export const ADD_MOVIE = 'ADD_MOVIE';
 export const EDIT_MOVIE = 'EDIT_MOVIE';
 export const DELETE_MOVIE = 'DELETE_MOVIE';
 export const MOVIE_SEARCH = 'MOVIE_SEARCH';
+export const CHANGE_SEARCH_QUERY = 'CHANGE_SEARCH_QUERY';
 export const CHANGE_TAB_INDEX = 'CHANGE_TAB_INDEX';
 export const CONTROL_PANEL_HEIGHT_CHANGE = 'CONTROL_PANEL_SIZE_CHANGE';
 export const CONTROL_PANEL_TOGGLE = 'CONTROL_PANEL_TOGGLE';
@@ -36,6 +38,10 @@ export const getMovies = () => dispatch => {
         ),
       })
     );
+};
+
+export const updateMovieList = () => dispatch => {
+  dispatch({ type: UPDATE_MOVIE_LIST });
 };
 
 export const addMovie = info => dispatch => {
@@ -141,6 +147,10 @@ export const clearError = () => dispatch => {
 
 export const searchMovies = query => dispatch => {
   dispatch({ type: MOVIE_SEARCH, payload: query });
+};
+
+export const changeSearchQuery = query => dispatch => {
+  dispatch({ type: CHANGE_SEARCH_QUERY, payload: query });
 };
 
 export const changeTabIndex = n => dispatch => {

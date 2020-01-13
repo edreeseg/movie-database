@@ -1,13 +1,14 @@
-import Fuse from 'fuse.js';
 import {
   ERROR,
   CLEAR_ERROR,
   LOADING,
   GET_MOVIES,
+  UPDATE_MOVIE_LIST,
   ADD_MOVIE,
   EDIT_MOVIE,
   DELETE_MOVIE,
   MOVIE_SEARCH,
+  CHANGE_SEARCH_QUERY,
   CHANGE_TAB_INDEX,
   CONTROL_PANEL_HEIGHT_CHANGE,
   CONTROL_PANEL_TOGGLE,
@@ -19,7 +20,9 @@ import {
   SEND_PAGE_TO_END,
   OPEN_EDIT_FORM,
   CLOSE_EDIT_FORM,
-} from './actions';
+} from '../actions';
+
+import { getDerivedListFromOptions } from '../selectors';
 
 const ratings = ['G', 'PG', 'PG-13', 'R', 'NC-17'];
 const genres = [
@@ -32,12 +35,18 @@ const genres = [
   'romance',
 ];
 
-const initialState = {
+// `originalList` represents the full, unaltered list of movies.
+// `movies` represents the list of movies representative of the currently
+// entered options, and is only updated based on `originalList`, leveraging
+// memoization through reselect library.
+
+export const initialState = {
   movies: [],
   originalList: [],
   sortBy: null,
   orderIsDescending: true,
   pageNumber: 1,
+  searchQuery: '',
   checkedGenres: new Map(genres.map(rating => [rating, true])),
   checkedRatings: new Map(ratings.map(rating => [rating, true])),
   controlPanelOpen: false,
@@ -59,15 +68,15 @@ const reducer = (state = initialState, action) => {
     case GET_MOVIES:
       return {
         ...state,
-        movies: action.payload,
         originalList: action.payload,
         loading: false,
         error: null,
       };
+    case UPDATE_MOVIE_LIST:
+      return { ...state, movies: getDerivedListFromOptions(state) };
     case ADD_MOVIE:
       return {
         ...state,
-        movies: [...state.movies, action.payload],
         originalList: [...state.originalList, action.payload],
         tabIndex: 0,
         controlPanelOpen: false,
@@ -78,12 +87,6 @@ const reducer = (state = initialState, action) => {
       const id = action.payload.movie_id;
       return {
         ...state,
-        movies: state.movies.map(movie => {
-          if (movie.movie_id === id) {
-            return action.payload;
-          }
-          return movie;
-        }),
         originalList: state.originalList.map(movie => {
           if (movie.movie_id === id) {
             return action.payload;
@@ -97,7 +100,6 @@ const reducer = (state = initialState, action) => {
     case DELETE_MOVIE:
       return {
         ...state,
-        movies: state.movies.filter(movie => movie.movie_id !== action.payload),
         originalList: state.originalList.filter(
           movie => movie.movie_id !== action.payload
         ),
@@ -107,12 +109,14 @@ const reducer = (state = initialState, action) => {
     case MOVIE_SEARCH:
       return {
         ...state,
-        movies: handleMovieSearch(state, action.payload),
+        movies: getDerivedListFromOptions(state),
         sortBy: action.payload.length >= 2 ? null : state.sortBy,
         controlPanelOpen: false,
         loading: false,
         error: null,
       };
+    case CHANGE_SEARCH_QUERY:
+      return { ...state, searchQuery: action.payload };
     case CHANGE_TAB_INDEX:
       return { ...state, tabIndex: action.payload };
     case CONTROL_PANEL_HEIGHT_CHANGE:
@@ -173,74 +177,5 @@ const reducer = (state = initialState, action) => {
       return state;
   }
 };
-
-function handleMovieSearch(state, query = '') {
-  // Handles movie list manipulation in three stages - filter, search, and then sort
-  const {
-    checkedGenres,
-    checkedRatings,
-    originalList,
-    sortBy,
-    orderIsDescending,
-  } = state;
-  const allItemsChecked =
-    [...checkedGenres.entries()].every(bool => bool) &&
-    [...checkedRatings.entries()].every(bool => bool);
-  if (allItemsChecked && !query && !sortBy) {
-    return [...state.originalList];
-  }
-  let newList = originalList.filter(
-    movie => checkedRatings.get(movie.rating) && checkedGenres.get(movie.genre)
-  );
-  if (query.length >= 2) {
-    const searchOptions = {
-      shouldSort: true,
-      threshold: 0.6,
-      location: 0,
-      distance: 100,
-      maxPatternLength: 32,
-      minMatchCharLength: 2,
-      keys: ['title', 'main_actors'],
-    };
-    const fuse = new Fuse(newList, searchOptions);
-    newList = fuse.search(query);
-  } else {
-    // Will mutate array that was newly created by .filter
-    newList.sort((a, b) => {
-      switch (sortBy) {
-        case 'A-Z':
-          if (orderIsDescending) {
-            return a.title > b.title ? 1 : -1;
-          }
-          return b.title > a.title ? 1 : -1;
-        case 'Year':
-          if (orderIsDescending) {
-            return a.year - b.year;
-          }
-          return b.year - a.year;
-        case 'Runtime':
-          if (orderIsDescending) {
-            return a.run_time - b.run_time;
-          }
-          return b.run_time - a.run_time;
-        case 'Rating':
-          const ratingValues = {
-            G: 0,
-            PG: 1,
-            'PG-13': 2,
-            R: 3,
-            'NC-17': 4,
-          };
-          if (orderIsDescending) {
-            return ratingValues[a.rating] - ratingValues[b.rating];
-          }
-          return ratingValues[b.rating] - ratingValues[a.rating];
-        default:
-          return 0;
-      }
-    });
-  }
-  return newList;
-}
 
 export default reducer;

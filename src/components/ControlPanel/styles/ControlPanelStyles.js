@@ -35,6 +35,7 @@ export const controlPanelStyles = makeStyles(theme => ({
     height: '75px',
     [theme.breakpoints.up(710)]: {
       marginLeft: '10%',
+      width: '90%',
     },
   },
   queryInput: {

@@ -1,14 +1,15 @@
 import React from 'react';
-import { render, getByText } from '@testing-library/react';
+import { render } from '@testing-library/react';
+import { Provider } from 'react-redux';
 import MovieList from './index';
+import configureStore from 'redux-mock-store';
+import thunk from 'redux-thunk';
+import { initialState } from '../../redux/reducers';
 
-const defaultProps = {
-  movies: [],
-  pageNumber: 1,
-};
+const mockStore = configureStore([thunk]);
 
 const exampleMovie = {
-  movie_id: 1,
+  movie_id: '1',
   title: 'Test Title',
   genre: 'Action',
   year: 2020,
@@ -18,37 +19,71 @@ const exampleMovie = {
 };
 
 describe('MovieList functionality', () => {
+  let store;
   it('Renders without crashing', () => {
-    const component = render(<MovieList {...defaultProps} />);
+    store = mockStore({ ...initialState, loading: false });
+
+    const component = render(
+      <Provider store={store}>
+        <MovieList />
+      </Provider>
+    );
   });
   it('Displays movie list passed as prop', () => {
-    const component = render(
-      <MovieList {...defaultProps} movies={[exampleMovie]} />
+    store = mockStore({
+      ...initialState,
+      loading: false,
+      movies: [exampleMovie],
+    });
+    const { getAllByText } = render(
+      <Provider store={store}>
+        <MovieList />
+      </Provider>
     );
-    getByText(exampleMovie.title);
+    getAllByText(exampleMovie.title);
   });
   it('Does not display more than ten movies at a time', () => {
     const movieList = Array(11)
       .fill(exampleMovie)
       .map((movie, index) => {
-        return { ...movie, title: `Test Title ${index + 1}` };
+        return {
+          ...movie,
+          movie_id: String(index),
+          title: `Test Title ${index + 1}`,
+        };
       });
-    const { getByText, queryByText } = render(
-      <MovieList {...defaultProps} movies={movieList} />
+    store = mockStore({ ...initialState, loading: false, movies: movieList });
+    const { getAllByText, queryByText } = render(
+      <Provider store={store}>
+        <MovieList />
+      </Provider>
     );
-    expect(getByText(/Test Title 10/i)).toBeInDocument();
+    getAllByText(/Test Title 10/i);
     expect(queryByText(/Test Title 11/i)).toBeNull();
   });
   it('Displays appropriate page', () => {
     const movieList = Array(11)
       .fill(exampleMovie)
       .map((movie, index) => {
-        return { ...movie, movie_id: index, title: `Test Title ${index + 1}` };
+        return {
+          ...movie,
+          movie_id: String(index),
+          title: `Test Title ${index + 1}`,
+        };
       });
-    const { getByText, queryByText } = render(
-      <MovieList {...defaultProps} movies={movieList} />
+    store = mockStore({
+      ...initialState,
+      loading: false,
+      movies: movieList,
+      pageNumber: 2,
+    });
+
+    const { getAllByText, queryByText } = render(
+      <Provider store={store}>
+        <MovieList />
+      </Provider>
     );
-    expect(getByText(/Test Title 11/i)).toBeInDocument();
+    getAllByText(/Test Title 11/i);
     expect(queryByText(/Test Title 10/i)).toBeNull();
   });
 });

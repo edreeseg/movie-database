@@ -13,12 +13,13 @@ const useStyles = makeStyles(theme => ({
     margin: '30px auto',
     overflow: 'auto',
     '& h4': {
-      marginTop: '30px',
+      textAlign: 'center',
+      margin: '30px auto',
     },
   },
 }));
 
-function MovieList({ movies, pageNumber, loading }) {
+export function MovieList({ movies, pageNumber, loading }) {
   const classes = useStyles();
   const generatePage = (arr, n) => {
     // Generate an array to represent the current page

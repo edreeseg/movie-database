@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import Container from '@material-ui/core/Container';
@@ -19,11 +19,12 @@ import SortOrder from '../SortOrder';
 import * as actions from '../../redux/actions';
 
 function ControlPanel({
+  searchQuery,
   controlPanelOpen,
   changeControlPanelHeight,
+  changeSearchQuery,
   searchMovies,
 }) {
-  const [searchQuery, setSearchQuery] = useState('');
   // Make use `react-resize-aware` library for the sake of having an exact pixel value
   // of the height of the control panel, to ensure accurate transformation.
   const [resizeListener, sizes] = useResizeAware();
@@ -58,7 +59,7 @@ function ControlPanel({
               className={classes.queryInput}
               variant="outlined"
               value={searchQuery}
-              onChange={ev => setSearchQuery(ev.target.value)}
+              onChange={ev => changeSearchQuery(ev.target.value)}
             />
           </InputLabel>
         </Container>
@@ -83,10 +84,12 @@ ControlPanel.propTypes = {
 };
 
 const mapStateToProps = state => ({
+  searchQuery: state.searchQuery,
   controlPanelOpen: state.controlPanelOpen,
 });
 
 export default connect(mapStateToProps, {
   changeControlPanelHeight: actions.changeControlPanelHeight,
+  changeSearchQuery: actions.changeSearchQuery,
   searchMovies: actions.searchMovies,
 })(ControlPanel);

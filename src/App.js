@@ -25,10 +25,20 @@ const listContainerStyles = makeStyles(theme => ({
   }),
 }));
 
-function App({ controlPanelOpen, controlPanelHeight, tabIndex, getMovies }) {
+function App({
+  originalList,
+  controlPanelOpen,
+  controlPanelHeight,
+  tabIndex,
+  getMovies,
+  updateMovieList,
+}) {
   useEffect(() => {
     getMovies();
   }, [getMovies]);
+  useEffect(() => {
+    updateMovieList();
+  }, [originalList, updateMovieList]);
   const listContainerClasses = listContainerStyles({
     controlPanelOpen: controlPanelOpen,
     controlPanelHeight: controlPanelHeight,
@@ -50,16 +60,22 @@ function App({ controlPanelOpen, controlPanelHeight, tabIndex, getMovies }) {
 }
 
 App.propTypes = {
+  originalList: PropTypes.array,
   controlPanelOpen: PropTypes.bool,
   controlPanelHeight: PropTypes.number,
   tabIndex: PropTypes.number,
   getMovies: PropTypes.func,
+  updateMovieList: PropTypes.func,
 };
 
 const mapStateToProps = state => ({
+  originalList: state.originalList,
   controlPanelOpen: state.controlPanelOpen,
   controlPanelHeight: state.controlPanelHeight,
   tabIndex: state.tabIndex,
 });
 
-export default connect(mapStateToProps, { getMovies: actions.getMovies })(App);
+export default connect(mapStateToProps, {
+  getMovies: actions.getMovies,
+  updateMovieList: actions.updateMovieList,
+})(App);
