@@ -7,7 +7,7 @@ Created using create-react-app. To install and run this application, perform the
 - Fork and clone this repository (e.g. `git clone`)
 - Run the command `npm install` in root directory to install all required dependencies.
 - Create a `.env` file in the root directory of this repository, and add the `REACT_APP_API_KEY` environmental variable. The value of this variable allows access to the provided back end for consumption, and will be provided through internal communication.
-- Run the command `npm run start` to run the applcation. By default application will start on `http://localhost:3000`.
+- Run the command `npm run start` to run the application. By default application will start on `http://localhost:3000`.
 
 - Dependencies:
 
