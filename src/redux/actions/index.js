@@ -205,5 +205,5 @@ function createErrorMessage(error, defaultMessage = 'An error occurred') {
 }
 
 function runTimeObjectToSeconds(obj) {
-  return obj.hours * 3600 + obj.minutes * 60 + obj.seconds;
+  return obj.hours * 3600 + obj.minutes * 60 + Number(obj.seconds);
 }
